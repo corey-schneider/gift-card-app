@@ -1,4 +1,10 @@
-# Seed initial sample cards and default PIN for instant testing
+# Do not seed anything in production environment
+if Rails.env.production?
+  puts "Production environment detected: skipping seeds to ensure a clean database."
+  return
+end
+
+# Seed initial sample cards and default PIN for instant testing in development/test
 
 AppSetting.set_passcode("1234") unless AppSetting.passcode_set?
 
