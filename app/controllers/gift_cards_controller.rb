@@ -11,8 +11,9 @@ class GiftCardsController < ApplicationController
     cards = cards.search(@search_query) if @search_query.present?
     @gift_cards = cards.by_sort(@current_sort)
 
-    @total_active_balance = GiftCard.active.sum(:balance)
+    @total_active_balance = GiftCard.active.where.not(balance: nil).sum(:balance)
     @active_count = GiftCard.active.count
+    @voucher_count = GiftCard.active.where(balance: [nil, 0]).count
     @expiring_soon_count = GiftCard.active.where(
       "expiration_date IS NOT NULL AND expiration_date >= ? AND expiration_date <= ?",
       Date.current,
@@ -87,6 +88,7 @@ class GiftCardsController < ApplicationController
       :card_number,
       :pin,
       :balance,
+      :value_description,
       :currency,
       :expiration_date,
       :booking_url,

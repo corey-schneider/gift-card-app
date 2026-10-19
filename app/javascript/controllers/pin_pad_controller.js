@@ -47,11 +47,11 @@ export default class extends Controller {
     if (this.hasDotTargets) {
       this.dotTargets.forEach((dot, index) => {
         if (index < currentLength) {
-          dot.classList.add("bg-emerald-400", "scale-110", "shadow-[0_0_10px_rgba(52,211,153,0.6)]")
-          dot.classList.remove("bg-slate-700")
+          dot.classList.add("bg-white", "scale-110")
+          dot.classList.remove("bg-neutral-700")
         } else {
-          dot.classList.remove("bg-emerald-400", "scale-110", "shadow-[0_0_10px_rgba(52,211,153,0.6)]")
-          dot.classList.add("bg-slate-700")
+          dot.classList.remove("bg-white", "scale-110")
+          dot.classList.add("bg-neutral-700")
         }
       })
     }

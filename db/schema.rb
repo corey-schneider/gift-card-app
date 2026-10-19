@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_19_225251) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_19_232758) do
   create_table "app_settings", force: :cascade do |t|
     t.string "passcode_digest"
     t.datetime "created_at", null: false
@@ -21,7 +21,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_225251) do
     t.string "store_name", null: false
     t.string "card_number", null: false
     t.string "pin"
-    t.decimal "balance", precision: 10, scale: 2, default: "0.0", null: false
+    t.decimal "balance", precision: 10, scale: 2
     t.string "currency", default: "USD", null: false
     t.date "expiration_date"
     t.string "booking_url"
@@ -30,6 +30,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_225251) do
     t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "value_description"
     t.index ["expiration_date"], name: "index_gift_cards_on_expiration_date"
     t.index ["redeemed"], name: "index_gift_cards_on_redeemed"
     t.index ["store_name"], name: "index_gift_cards_on_store_name"

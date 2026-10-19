@@ -59,6 +59,25 @@ class GiftCardsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "1122 3344 5566 7788", new_card.card_number
   end
 
+  test "creates new certificate without balance" do
+    assert_difference("GiftCard.count", 1) do
+      post gift_cards_url, params: {
+        gift_card: {
+          store_name: "Blue Sky Adventures",
+          card_number: "SKY-9988",
+          value_description: "Buy 1 Get 1 Free",
+          balance: "",
+          color_theme: "navy"
+        }
+      }
+    end
+
+    assert_redirected_to root_url
+    new_card = GiftCard.find_by(store_name: "Blue Sky Adventures")
+    assert_nil new_card.balance
+    assert_equal "Buy 1 Get 1 Free", new_card.value_description
+  end
+
   test "updates existing gift card" do
     patch gift_card_url(@card), params: {
       gift_card: {

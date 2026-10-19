@@ -2,14 +2,30 @@
 
 AppSetting.set_passcode("1234") unless AppSetting.passcode_set?
 
+# Clean slate for seeds
+GiftCard.destroy_all
+
 sample_cards = [
+  {
+    store_name: "Blue Sky Skydivers",
+    card_number: "SKY-BOGO-99214",
+    pin: "",
+    balance: nil, # No cash balance!
+    value_description: "Buy 1 Get 1 Free (Tandem Jump)",
+    expiration_date: Date.current + 45.days,
+    color_theme: "navy",
+    booking_url: "https://example.com/skydiving-book",
+    redeemed: false,
+    notes: "Requires advance reservation. Must spend $125 to get second jump free."
+  },
   {
     store_name: "Target",
     card_number: "6011 4820 9931 4022",
     pin: "8841",
     balance: 50.00,
+    value_description: nil,
     expiration_date: Date.current + 14.days, # Expiring soon
-    color_theme: "rose",
+    color_theme: "classic",
     booking_url: "https://www.target.com",
     redeemed: false,
     notes: "Birthday gift from Mom"
@@ -19,8 +35,9 @@ sample_cards = [
     card_number: "6082 1290 8472 9015",
     pin: "3219",
     balance: 25.50,
+    value_description: nil,
     expiration_date: Date.current + 90.days,
-    color_theme: "emerald",
+    color_theme: "forest",
     booking_url: "https://app.starbucks.com",
     redeemed: false,
     notes: "Reloadable digital card"
@@ -30,8 +47,9 @@ sample_cards = [
     card_number: "AQ29-XJ48-91KM-02P9",
     pin: "",
     balance: 100.00,
+    value_description: nil,
     expiration_date: nil, # Never expires
-    color_theme: "amber",
+    color_theme: "stone",
     booking_url: "https://www.amazon.com/gc/redeem",
     redeemed: false,
     notes: "No expiration date"
@@ -41,8 +59,9 @@ sample_cards = [
     card_number: "X902 4410 8821 7730",
     pin: "1928",
     balance: 150.00,
+    value_description: nil,
     expiration_date: Date.current + 365.days,
-    color_theme: "slate",
+    color_theme: "zinc",
     booking_url: "https://www.apple.com",
     redeemed: false,
     notes: "Saved for new AirPods"
@@ -52,8 +71,9 @@ sample_cards = [
     card_number: "0062 8840 1928 3391",
     pin: "4402",
     balance: 200.00,
+    value_description: nil,
     expiration_date: Date.current - 10.days, # Expired card
-    color_theme: "indigo",
+    color_theme: "classic",
     booking_url: "https://www.delta.com",
     redeemed: true,
     notes: "Redeemed for flight to Chicago"
@@ -61,15 +81,7 @@ sample_cards = [
 ]
 
 sample_cards.each do |attrs|
-  GiftCard.find_or_create_by!(store_name: attrs[:store_name], card_number: attrs[:card_number]) do |c|
-    c.pin = attrs[:pin]
-    c.balance = attrs[:balance]
-    c.expiration_date = attrs[:expiration_date]
-    c.color_theme = attrs[:color_theme]
-    c.booking_url = attrs[:booking_url]
-    c.redeemed = attrs[:redeemed]
-    c.notes = attrs[:notes]
-  end
+  GiftCard.create!(attrs)
 end
 
 puts "Seeded #{GiftCard.count} gift cards successfully! Default master PIN is 1234."

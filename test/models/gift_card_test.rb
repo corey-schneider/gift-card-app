@@ -1,7 +1,7 @@
 require "test_helper"
 
 class GiftCardTest < ActiveSupport::TestCase
-  test "validates required fields" do
+  test "validates required fields and allows optional balance" do
     card = GiftCard.new
     assert_not card.valid?
     assert_includes card.errors[:store_name], "can't be blank"
@@ -12,6 +12,11 @@ class GiftCardTest < ActiveSupport::TestCase
     card.balance = -5
     assert_not card.valid?
     assert_includes card.errors[:balance], "must be greater than or equal to 0"
+
+    # Balance is optional for certificates / BOGO vouchers
+    card.balance = nil
+    card.value_description = "Buy 1 Get 1 Free"
+    assert card.valid?
 
     card.balance = 25.0
     assert card.valid?
@@ -72,18 +77,28 @@ class GiftCardTest < ActiveSupport::TestCase
     # amount_desc: 100, 50, 10
     by_amount = GiftCard.where(id: [card1.id, card2.id, card3.id]).by_sort("amount_desc")
     assert_equal [100.0, 50.0, 10.0], by_amount.map(&:balance).map(&:to_f)
+
+    # card without balance is sorted last in amount_desc
+    voucher = GiftCard.create!(store_name: "Skydiving", card_number: "SKYDIVE1", balance: nil, value_description: "BOGO")
+    with_voucher = GiftCard.where(id: [card1.id, card2.id, voucher.id]).by_sort("amount_desc")
+    assert_equal voucher.id, with_voucher.last.id
   end
 
-  test "search filters by store name and notes" do
+  test "search filters by store name, notes, and value_description" do
     card1 = GiftCard.create!(store_name: "Nordstrom", card_number: "1234", balance: 50, notes: "Anniversary gift")
     card2 = GiftCard.create!(store_name: "Macy's", card_number: "5678", balance: 25, notes: "General shopping")
+    card3 = GiftCard.create!(store_name: "Adventure Co", card_number: "9999", balance: nil, value_description: "Skydiving Jump")
 
-    results = GiftCard.where(id: [card1.id, card2.id]).search("nord")
+    results = GiftCard.where(id: [card1.id, card2.id, card3.id]).search("nord")
     assert_includes results, card1
     assert_not_includes results, card2
 
-    results_notes = GiftCard.where(id: [card1.id, card2.id]).search("anniversary")
+    results_notes = GiftCard.where(id: [card1.id, card2.id, card3.id]).search("anniversary")
     assert_includes results_notes, card1
     assert_not_includes results_notes, card2
+
+    results_perk = GiftCard.where(id: [card1.id, card2.id, card3.id]).search("skydiving")
+    assert_includes results_perk, card3
+    assert_not_includes results_perk, card1
   end
 end
