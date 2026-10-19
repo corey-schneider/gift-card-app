@@ -1,0 +1,190 @@
+<!-- Add / Edit Gift Card Modal -->
+<div id="card-form-modal" 
+     data-controller="modal" 
+     class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/80 backdrop-blur-md transition-all duration-300"
+     data-action="click->modal#closeOnBackdrop keydown.esc@window->modal#closeOnEsc">
+  
+  <div data-modal-target="content" 
+       class="w-full max-w-md max-h-[90vh] bg-slate-900 border-t sm:border border-slate-800 rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-y-auto transform transition-all duration-300 translate-y-full sm:translate-y-0 relative">
+    
+    <!-- Top Mobile Drag Handle -->
+    <div class="sm:hidden pt-3 flex justify-center">
+      <div class="w-10 h-1 rounded-full bg-slate-700"></div>
+    </div>
+
+    <!-- Close Button -->
+    <button type="button" 
+            data-action="click->modal#close" 
+            class="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-full bg-slate-800/60 hover:bg-slate-800 transition">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+
+    <div class="p-6">
+      <div class="flex items-center gap-2 mb-4">
+        <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+        </div>
+        <h3 id="card-modal-title" class="text-lg font-bold text-white">Add Gift Card</h3>
+      </div>
+
+      <!-- Form (dynamically switched between POST /gift_cards and PATCH /gift_cards/:id) -->
+      <form id="card-active-form" action="<%= gift_cards_path %>" method="post" class="space-y-4">
+        <%= token_tag %>
+        <input type="hidden" name="_method" id="card-form-method" value="post">
+
+        <!-- Store Name -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Store / Merchant Name *</label>
+          <input type="text" name="gift_card[store_name]" id="card_store_name" required placeholder="e.g. Amazon, Target, Starbucks, Apple" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm text-white placeholder-slate-500 outline-none transition">
+          <!-- Quick Store Chips -->
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <% ["Amazon", "Target", "Starbucks", "Apple", "Best Buy", "Delta", "Sephora"].each do |store| %>
+              <button type="button" onclick="document.getElementById('card_store_name').value='<%= store %>'" class="px-2 py-0.5 rounded-md text-[11px] bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700/60 transition">
+                <%= store %>
+              </button>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Balance & Currency -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Balance ($) *</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 font-semibold text-sm">$</span>
+              <input type="number" step="0.01" min="0" name="gift_card[balance]" id="card_balance" required placeholder="0.00" class="w-full pl-7 pr-3 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm text-white placeholder-slate-500 outline-none transition">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Color Style</label>
+            <select name="gift_card[color_theme]" id="card_color_theme" class="w-full px-3 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm text-white outline-none transition">
+              <option value="emerald">Emerald Mint</option>
+              <option value="indigo">Indigo Night</option>
+              <option value="violet">Violet Velvet</option>
+              <option value="rose">Rose Ruby</option>
+              <option value="amber">Sunset Gold</option>
+              <option value="cyan">Cyan Breeze</option>
+              <option value="slate">Dark Titanium</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Card Number & PIN -->
+        <div class="grid grid-cols-3 gap-3">
+          <div class="col-span-2">
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Card Number *</label>
+            <input type="text" name="gift_card[card_number]" id="card_card_number" required placeholder="XXXX XXXX XXXX XXXX" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-mono-code text-sm text-white placeholder-slate-500 outline-none transition">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">PIN (optional)</label>
+            <input type="text" name="gift_card[pin]" id="card_pin" placeholder="PIN" class="w-full px-3 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-mono-code text-sm text-white placeholder-slate-500 outline-none transition">
+          </div>
+        </div>
+
+        <!-- Expiration Date with Presets -->
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="text-xs font-semibold text-slate-300">Expiration Date (optional)</label>
+            <div class="flex gap-1.5 text-[10px]">
+              <button type="button" onclick="setExpirationYears(1)" class="text-emerald-400 hover:underline">+1 Yr</button>
+              <span class="text-slate-600">•</span>
+              <button type="button" onclick="setExpirationYears(2)" class="text-emerald-400 hover:underline">+2 Yrs</button>
+              <span class="text-slate-600">•</span>
+              <button type="button" onclick="document.getElementById('card_expiration_date').value=''" class="text-slate-400 hover:underline">Never</button>
+            </div>
+          </div>
+          <input type="date" name="gift_card[expiration_date]" id="card_expiration_date" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm text-white outline-none transition">
+        </div>
+
+        <!-- Booking / Redeem URL -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Redeem / Booking URL (optional)</label>
+          <input type="url" name="gift_card[booking_url]" id="card_booking_url" placeholder="https://..." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm text-white placeholder-slate-500 outline-none transition">
+        </div>
+
+        <!-- Notes / Memo -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Notes / Terms (optional)</label>
+          <textarea name="gift_card[notes]" id="card_notes" rows="2" placeholder="e.g. Birthday gift from Mom, valid at physical locations only" class="w-full px-3.5 py-2 rounded-xl bg-slate-800/80 border border-slate-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-xs text-white placeholder-slate-500 outline-none transition resize-none"></textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="pt-2">
+          <button type="submit" id="card-modal-submit" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold text-sm shadow-lg shadow-emerald-500/20 active:scale-98 transition flex items-center justify-center gap-2">
+            Save Card
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function setExpirationYears(years) {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() + years);
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    document.getElementById('card_expiration_date').value = `${yyyy}-${mm}-${dd}`;
+  }
+
+  window.openAddModal = function() {
+    const modal = document.getElementById('card-form-modal');
+    const form = document.getElementById('card-active-form');
+    const methodInput = document.getElementById('card-form-method');
+    const title = document.getElementById('card-modal-title');
+    const submit = document.getElementById('card-modal-submit');
+
+    form.action = "<%= gift_cards_path %>";
+    methodInput.value = "post";
+    title.textContent = "Add Gift Card";
+    submit.textContent = "Save Card";
+
+    document.getElementById('card_store_name').value = '';
+    document.getElementById('card_card_number').value = '';
+    document.getElementById('card_pin').value = '';
+    document.getElementById('card_balance').value = '';
+    document.getElementById('card_color_theme').value = 'emerald';
+    document.getElementById('card_expiration_date').value = '';
+    document.getElementById('card_booking_url').value = '';
+    document.getElementById('card_notes').value = '';
+
+    modal.classList.remove('hidden');
+    document.body.classList.add('overflow-hidden');
+    setTimeout(() => {
+      document.getElementById('card_store_name').focus();
+    }, 100);
+  };
+
+  window.openEditModal = function(id, store, number, pin, balance, currency, exp, booking, redeemed, theme, notes) {
+    const modal = document.getElementById('card-form-modal');
+    const form = document.getElementById('card-active-form');
+    const methodInput = document.getElementById('card-form-method');
+    const title = document.getElementById('card-modal-title');
+    const submit = document.getElementById('card-modal-submit');
+
+    form.action = `/gift_cards/${id}`;
+    methodInput.value = "patch";
+    title.textContent = `Edit ${store} Card`;
+    submit.textContent = "Update Card";
+
+    document.getElementById('card_store_name').value = store || '';
+    document.getElementById('card_card_number').value = number || '';
+    document.getElementById('card_pin').value = pin || '';
+    document.getElementById('card_balance').value = balance || '';
+    document.getElementById('card_color_theme').value = theme || 'emerald';
+    document.getElementById('card_expiration_date').value = exp || '';
+    document.getElementById('card_booking_url').value = booking || '';
+    document.getElementById('card_notes').value = notes || '';
+
+    modal.classList.remove('hidden');
+    document.body.classList.add('overflow-hidden');
+  };
+</script>

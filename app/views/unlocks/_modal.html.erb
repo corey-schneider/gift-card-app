@@ -1,0 +1,26 @@
+<!-- Unlock Modal Backdrop & Shell -->
+<div id="unlock-modal" 
+     data-controller="modal" 
+     class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/80 backdrop-blur-md transition-all duration-300"
+     data-action="click->modal#closeOnBackdrop keydown.esc@window->modal#closeOnEsc">
+  
+  <div data-modal-target="content" 
+       class="w-full max-w-sm bg-slate-900 border-t sm:border border-slate-800 rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden transform transition-all duration-300 translate-y-full sm:translate-y-0 relative">
+    
+    <!-- Top Drag Handle for mobile -->
+    <div class="sm:hidden pt-3 flex justify-center">
+      <div class="w-10 h-1 rounded-full bg-slate-700"></div>
+    </div>
+
+    <!-- Close Button -->
+    <button type="button" 
+            data-action="click->modal#close" 
+            class="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-full bg-slate-800/60 hover:bg-slate-800 transition">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+
+    <%= render "unlocks/modal_content" %>
+  </div>
+</div>

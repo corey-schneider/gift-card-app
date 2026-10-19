@@ -1,0 +1,96 @@
+<% is_first_time = local_assigns[:first_time] || !AppSetting.passcode_set? %>
+<% error_msg = local_assigns[:error] %>
+
+<div id="unlock_modal_content" class="p-6 text-center" data-controller="pin-pad" data-pin-pad-auto-submit-length-value="4">
+  <!-- Vault Icon -->
+  <div class="mx-auto w-14 h-14 rounded-2xl bg-gradient-to-tr <%= is_first_time ? 'from-amber-500 to-orange-400' : 'from-emerald-500 to-teal-400' %> flex items-center justify-center shadow-lg shadow-emerald-500/10 mb-4">
+    <% if is_first_time %>
+      <svg class="w-7 h-7 text-slate-950" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+      </svg>
+    <% else %>
+      <svg class="w-7 h-7 text-slate-950" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+      </svg>
+    <% end %>
+  </div>
+
+  <h3 class="text-xl font-bold text-white">
+    <%= is_first_time ? "Set Master PIN" : "Unlock Vault" %>
+  </h3>
+  <p class="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
+    <%= is_first_time ? "Choose a 4-to-6 digit PIN to protect your card numbers and PINs." : "Enter your PIN to reveal all card numbers and codes for 5 minutes." %>
+  </p>
+
+  <% if error_msg.present? %>
+    <div class="mt-3 px-3 py-1.5 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-300 text-xs font-semibold animate-shake">
+      <%= error_msg %>
+    </div>
+  <% end %>
+
+  <!-- Unlock Form -->
+  <%= form_with url: unlock_path, method: :post, data: { pin_pad_target: "form" }, class: "mt-5" do |f| %>
+    <!-- Secret PIN Input -->
+    <div class="relative flex justify-center mb-6">
+      <%= f.password_field :pin, 
+                           data: { pin_pad_target: "input", action: "input->pin-pad#onInput" }, 
+                           class: "opacity-0 absolute inset-0 w-full h-full cursor-pointer z-10", 
+                           autocomplete: "off", 
+                           inputmode: "numeric", 
+                           pattern: "[0-9]*", 
+                           autofocus: true %>
+
+      <!-- PIN Indicator Dots -->
+      <div class="flex items-center justify-center gap-3">
+        <div data-pin-pad-target="dot" class="w-4 h-4 rounded-full bg-slate-700 transition-all duration-200"></div>
+        <div data-pin-pad-target="dot" class="w-4 h-4 rounded-full bg-slate-700 transition-all duration-200"></div>
+        <div data-pin-pad-target="dot" class="w-4 h-4 rounded-full bg-slate-700 transition-all duration-200"></div>
+        <div data-pin-pad-target="dot" class="w-4 h-4 rounded-full bg-slate-700 transition-all duration-200"></div>
+      </div>
+    </div>
+
+    <!-- Mobile Tactile Numeric Keypad -->
+    <div class="grid grid-cols-3 gap-2.5 max-w-[260px] mx-auto select-none">
+      <% [1, 2, 3, 4, 5, 6, 7, 8, 9].each do |num| %>
+        <button type="button" 
+                data-action="click->pin-pad#pressDigit" 
+                data-digit="<%= num %>" 
+                class="h-14 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 active:bg-emerald-500 active:text-slate-950 font-bold text-xl text-white shadow-sm border border-slate-700/50 transition duration-150 flex items-center justify-center active:scale-95">
+          <%= num %>
+        </button>
+      <% end %>
+
+      <!-- Clear / Cancel -->
+      <button type="button" 
+              data-action="click->pin-pad#clear" 
+              class="h-14 rounded-2xl bg-slate-800/40 hover:bg-slate-800/60 font-semibold text-xs text-slate-400 active:scale-95 transition flex items-center justify-center">
+        Clear
+      </button>
+
+      <!-- Digit 0 -->
+      <button type="button" 
+              data-action="click->pin-pad#pressDigit" 
+              data-digit="0" 
+              class="h-14 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 active:bg-emerald-500 active:text-slate-950 font-bold text-xl text-white shadow-sm border border-slate-700/50 transition duration-150 flex items-center justify-center active:scale-95">
+        0
+      </button>
+
+      <!-- Backspace -->
+      <button type="button" 
+              data-action="click->pin-pad#backspace" 
+              class="h-14 rounded-2xl bg-slate-800/40 hover:bg-slate-800/60 font-bold text-slate-400 active:scale-95 transition flex items-center justify-center" 
+              title="Backspace">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414-6.414a2 2 0 011.414-.586H19a2 2 0 012 2v10a2 2 0 01-2 2h-8.172a2 2 0 01-1.414-.586L3 12z" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Manual Submit Button (for longer PINs/passwords) -->
+    <div class="mt-4 flex gap-2">
+      <button type="submit" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold text-sm shadow-lg shadow-emerald-500/20 active:scale-98 transition">
+        <%= is_first_time ? "Save & Unlock (5 Min)" : "Unlock Vault" %>
+      </button>
+    </div>
+  <% end %>
+</div>

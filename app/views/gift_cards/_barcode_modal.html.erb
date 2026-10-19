@@ -1,0 +1,38 @@
+<!-- Barcode Display Modal -->
+<div id="barcode-modal" 
+     data-barcode-modal-target="modal"
+     class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md transition-all duration-300"
+     data-action="click->barcode-modal#closeOnBackdrop">
+  
+  <div class="w-full max-w-sm bg-white text-slate-900 rounded-3xl p-6 shadow-2xl relative text-center">
+    <!-- Close Button -->
+    <button type="button" 
+            data-action="click->barcode-modal#close" 
+            class="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-800 rounded-full hover:bg-slate-100 transition">
+      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+
+    <div class="mb-2">
+      <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Scan at Register</span>
+      <h3 data-barcode-modal-target="storeName" class="text-xl font-extrabold text-slate-900 mt-0.5">Store</h3>
+    </div>
+
+    <!-- Scannable Barcode SVG Container -->
+    <div class="py-4 px-2 bg-white rounded-xl border border-slate-200 shadow-inner flex flex-col items-center justify-center min-h-[120px]">
+      <div data-barcode-modal-target="svgContainer" class="w-full"></div>
+      <p data-barcode-modal-target="cardNumber" class="font-mono-code font-bold text-sm tracking-widest text-slate-800 mt-2 select-all"></p>
+    </div>
+
+    <p class="text-[11px] text-slate-500 mt-4">
+      Turn up screen brightness if the barcode scanner has trouble reading.
+    </p>
+
+    <button type="button" 
+            data-action="click->barcode-modal#close" 
+            class="mt-4 w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm transition">
+      Done
+    </button>
+  </div>
+</div>

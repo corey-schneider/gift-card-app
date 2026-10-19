@@ -1,0 +1,197 @@
+<div data-controller="barcode-modal" class="flex-1 flex flex-col">
+  <!-- Top Native Navigation Bar -->
+  <header class="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/60 px-4 pt-safe pb-3">
+    <div class="flex items-center justify-between gap-3">
+      <!-- App Brand -->
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-md shadow-emerald-500/20">
+          <svg class="w-5 h-5 text-slate-950" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-base font-extrabold tracking-tight text-white flex items-center gap-1.5">
+            VaultCards
+          </h1>
+          <span class="text-[10px] text-slate-400 block font-medium -mt-0.5">Gift Card Registry</span>
+        </div>
+      </div>
+
+      <!-- Header Actions: Lock/Unlock Pill & Settings -->
+      <div class="flex items-center gap-2">
+        <% if session_unlocked? %>
+          <!-- Live Countdown Unlock Pill -->
+          <div data-controller="unlock-timer" 
+               data-unlock-timer-seconds-value="<%= remaining_unlock_seconds %>" 
+               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-semibold shadow-sm">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span data-unlock-timer-target="display">05:00</span>
+            
+            <%= button_to lock_path, method: :delete, class: "ml-1 text-slate-400 hover:text-white transition", title: "Lock Now" do %>
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            <% end %>
+          </div>
+        <% else %>
+          <!-- Locked Pill -->
+          <button type="button" 
+                  id="unlock-modal-trigger" 
+                  onclick="document.getElementById('unlock-modal').classList.remove('hidden'); document.body.classList.add('overflow-hidden');" 
+                  class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-semibold transition active:scale-95 shadow-sm">
+            <svg class="w-3.5 h-3.5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            <span>Locked</span>
+          </button>
+        <% end %>
+
+        <!-- Settings Modal Trigger -->
+        <button type="button" 
+                onclick="document.getElementById('settings-modal').classList.remove('hidden'); document.body.classList.add('overflow-hidden');" 
+                class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-white transition active:scale-95"
+                title="Security Settings">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 px-4 py-4 space-y-4">
+    <!-- Wallet Portfolio Balance Card -->
+    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900/90 to-slate-800/80 p-5 border border-slate-800 shadow-xl">
+      <div class="flex items-start justify-between">
+        <div>
+          <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold block">Total Active Balance</span>
+          <div class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mt-1">
+            <%= number_to_currency(@total_active_balance, unit: "$") %>
+          </div>
+          <div class="flex items-center gap-2 mt-2">
+            <span class="inline-flex items-center gap-1 text-xs text-slate-300 bg-slate-800/80 px-2 py-0.5 rounded-full border border-slate-700/50">
+              💳 <%= pluralize(@active_count, "active card") %>
+            </span>
+            <% if @expiring_soon_count > 0 %>
+              <span class="inline-flex items-center gap-1 text-xs text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+                ⏳ <%= pluralize(@expiring_soon_count, "expiring soon") %>
+              </span>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Add Card Button -->
+        <button type="button" 
+                onclick="window.openAddModal()" 
+                class="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-lg shadow-emerald-500/20 active:scale-95 transition">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+          </svg>
+          <span>Add Card</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Filter & Sort Bar -->
+    <div class="space-y-3">
+      <!-- Search Box & Sort Dropdown Form -->
+      <%= form_with url: root_path, method: :get, class: "space-y-2.5" do |f| %>
+        <%= f.hidden_field :status, value: @current_status %>
+
+        <!-- Search Input -->
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </span>
+          <%= f.text_field :q, 
+                           value: @search_query, 
+                           placeholder: "Search cards by store name...", 
+                           onchange: "this.form.submit()",
+                           class: "w-full pl-10 pr-10 py-2.5 rounded-2xl bg-slate-900 border border-slate-800 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition shadow-inner" %>
+          <% if @search_query.present? %>
+            <a href="<%= root_path(status: @current_status, sort: @current_sort) %>" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-white">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </a>
+          <% end %>
+        </div>
+
+        <!-- Filter Tabs & Sort Picker Row -->
+        <div class="flex items-center justify-between gap-2">
+          <!-- Status Segmented Pills -->
+          <div class="inline-flex rounded-xl bg-slate-900 p-1 border border-slate-800/80 text-xs font-semibold">
+            <%= link_to "Active (#{@active_count})", root_path(status: "active", sort: @current_sort, q: @search_query),
+                        class: "px-3 py-1 rounded-lg transition #{ @current_status == 'active' ? 'bg-emerald-500 text-slate-950 shadow-sm' : 'text-slate-400 hover:text-white' }" %>
+            <%= link_to "Redeemed", root_path(status: "redeemed", sort: @current_sort, q: @search_query),
+                        class: "px-3 py-1 rounded-lg transition #{ @current_status == 'redeemed' ? 'bg-emerald-500 text-slate-950 shadow-sm' : 'text-slate-400 hover:text-white' }" %>
+            <%= link_to "All", root_path(status: "all", sort: @current_sort, q: @search_query),
+                        class: "px-3 py-1 rounded-lg transition #{ @current_status == 'all' ? 'bg-emerald-500 text-slate-950 shadow-sm' : 'text-slate-400 hover:text-white' }" %>
+          </div>
+
+          <!-- Sort Select -->
+          <div class="relative shrink-0">
+            <select name="sort" onchange="this.form.submit()" class="appearance-none pl-3 pr-8 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-semibold text-slate-300 focus:outline-none focus:border-emerald-500 transition cursor-pointer">
+              <option value="expiring_first" <%= 'selected' if @current_sort == 'expiring_first' %>>⏳ Expiring First</option>
+              <option value="exp_asc" <%= 'selected' if @current_sort == 'exp_asc' %>>📅 Expiration: Soonest</option>
+              <option value="exp_desc" <%= 'selected' if @current_sort == 'exp_desc' %>>📅 Expiration: Furthest</option>
+              <option value="name_asc" <%= 'selected' if @current_sort == 'name_asc' %>>🔤 Store: A → Z</option>
+              <option value="name_desc" <%= 'selected' if @current_sort == 'name_desc' %>>🔤 Store: Z → A</option>
+              <option value="amount_desc" <%= 'selected' if @current_sort == 'amount_desc' %>>💰 Balance: High → Low</option>
+              <option value="amount_asc" <%= 'selected' if @current_sort == 'amount_asc' %>>💰 Balance: Low → High</option>
+            </select>
+            <span class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none text-slate-500">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Gift Cards List -->
+    <div id="gift-cards-container" class="space-y-4">
+      <% if @gift_cards.any? %>
+        <% @gift_cards.each do |card| %>
+          <%= render "gift_cards/gift_card", gift_card: card %>
+        <% end %>
+      <% else %>
+        <!-- Empty State -->
+        <div class="rounded-3xl border border-dashed border-slate-800 p-8 text-center bg-slate-900/30 my-6">
+          <div class="mx-auto w-14 h-14 rounded-2xl bg-slate-800/80 flex items-center justify-center text-slate-500 mb-3">
+            <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+            </svg>
+          </div>
+          <h4 class="text-base font-bold text-white">No gift cards found</h4>
+          <p class="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
+            <%= @search_query.present? ? "No cards match '#{@search_query}'." : "Your vault is empty. Tap below to store your first gift card!" %>
+          </p>
+          <div class="mt-4">
+            <button type="button" 
+                    onclick="window.openAddModal()" 
+                    class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition active:scale-95 shadow-md shadow-emerald-500/20">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+              </svg>
+              <span>Add Gift Card</span>
+            </button>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </main>
+
+  <!-- Modals -->
+  <%= render "unlocks/modal" %>
+  <%= render "gift_cards/form_modal" %>
+  <%= render "gift_cards/barcode_modal" %>
+  <%= render "unlocks/settings_modal" %>
+</div>
