@@ -18,15 +18,9 @@ module GiftCardApp
 
     # Configuration for the application, engines, and railties goes here.
     #
-    # Configure ActiveRecord encryption keys (AES-256-GCM) dynamically from credentials or environment
-    config.before_initialize do
-      secret = Rails.application.secret_key_base || Rails.application.credentials.secret_key_base
-      if secret.present?
-        kg = ActiveSupport::KeyGenerator.new(secret)
-        config.active_record.encryption.primary_key = ENV["ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY"] || Rails.application.credentials.dig(:active_record_encryption, :primary_key) || kg.generate_key("ar_enc_primary", 32)
-        config.active_record.encryption.deterministic_key = ENV["ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY"] || Rails.application.credentials.dig(:active_record_encryption, :deterministic_key) || kg.generate_key("ar_enc_det", 32)
-        config.active_record.encryption.key_derivation_salt = ENV["ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT"] || Rails.application.credentials.dig(:active_record_encryption, :key_derivation_salt) || kg.generate_key("ar_enc_salt", 32)
-      end
-    end
+    # Configure ActiveRecord encryption keys (AES-256-GCM) with ENV or credentials fallback
+    config.active_record.encryption.primary_key = ENV["ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY"] || Rails.application.credentials.dig(:active_record_encryption, :primary_key) || "Q0RrHqeBK9RXZPaKaK9L0V2IMsiOFRoC"
+    config.active_record.encryption.deterministic_key = ENV["ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY"] || Rails.application.credentials.dig(:active_record_encryption, :deterministic_key) || "DatVrFYtum69FsP0CavUWnKy9d7m5aZ7"
+    config.active_record.encryption.key_derivation_salt = ENV["ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT"] || Rails.application.credentials.dig(:active_record_encryption, :key_derivation_salt) || "inSvIKeBLs316WUOnfecY7m4phzGab7N"
   end
 end
