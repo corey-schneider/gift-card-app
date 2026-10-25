@@ -30,8 +30,8 @@ class UnlocksController < ApplicationController
     flash[:notice] = "Vault locked."
 
     respond_to do |format|
-      format.turbo_stream { redirect_to root_path }
-      format.html { redirect_to root_path }
+      format.turbo_stream { redirect_to root_path, status: :see_other }
+      format.html { redirect_to root_path, status: :see_other }
     end
   end
 
@@ -40,26 +40,26 @@ class UnlocksController < ApplicationController
     new_pin = params[:new_pin].to_s.strip
 
     if AppSetting.passcode_set? && !AppSetting.authenticate(current_pin)
-      redirect_to root_path, alert: "Current PIN is incorrect."
+      redirect_to root_path, status: :see_other, alert: "Current PIN is incorrect."
       return
     end
 
     if new_pin.blank? || new_pin.length < 4
-      redirect_to root_path, alert: "New PIN must be at least 4 digits or characters."
+      redirect_to root_path, status: :see_other, alert: "New PIN must be at least 4 digits or characters."
       return
     end
 
     AppSetting.set_passcode(new_pin)
     session[:unlocked_until] = 5.minutes.from_now.to_i
-    redirect_to root_path, notice: "Master PIN updated successfully!"
+    redirect_to root_path, status: :see_other, notice: "Master PIN updated successfully!"
   end
 
   private
 
   def respond_with_auth_success
     respond_to do |format|
-      format.turbo_stream { redirect_to root_path }
-      format.html { redirect_to root_path }
+      format.turbo_stream { redirect_to root_path, status: :see_other }
+      format.html { redirect_to root_path, status: :see_other }
     end
   end
 
@@ -72,7 +72,7 @@ class UnlocksController < ApplicationController
           locals: { error: flash.now[:alert], first_time: !AppSetting.passcode_set? }
         ), status: :unprocessable_entity
       end
-      format.html { redirect_to root_path, alert: flash.now[:alert] }
+      format.html { redirect_to root_path, status: :see_other, alert: flash.now[:alert] }
     end
   end
 end

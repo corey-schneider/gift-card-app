@@ -40,7 +40,7 @@ class GiftCardsController < ApplicationController
     @gift_card = GiftCard.new(gift_card_params)
 
     if @gift_card.save
-      redirect_to root_path, notice: "#{@gift_card.store_name} card was successfully added!"
+      redirect_to root_path, status: :see_other, notice: "#{@gift_card.store_name} card was successfully added!"
     else
       render :new, status: :unprocessable_entity
     end
@@ -48,7 +48,7 @@ class GiftCardsController < ApplicationController
 
   def update
     if @gift_card.update(gift_card_params)
-      redirect_to root_path, notice: "#{@gift_card.store_name} card was updated!"
+      redirect_to root_path, status: :see_other, notice: "#{@gift_card.store_name} card was updated!"
     else
       render :edit, status: :unprocessable_entity
     end
@@ -57,7 +57,7 @@ class GiftCardsController < ApplicationController
   def destroy
     store = @gift_card.store_name
     @gift_card.destroy
-    redirect_to root_path, notice: "#{store} card was removed."
+    redirect_to root_path, status: :see_other, notice: "#{store} card was removed."
   end
 
   def toggle_redeemed
@@ -67,10 +67,12 @@ class GiftCardsController < ApplicationController
     respond_to do |format|
       format.turbo_stream do
         redirect_to root_path(status: params[:status], sort: params[:sort], q: params[:q]),
+                    status: :see_other,
                     notice: "#{@gift_card.store_name} #{status_text}."
       end
       format.html do
         redirect_to root_path(status: params[:status], sort: params[:sort], q: params[:q]),
+                    status: :see_other,
                     notice: "#{@gift_card.store_name} #{status_text}."
       end
     end

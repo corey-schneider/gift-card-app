@@ -83,8 +83,9 @@ class GiftCardsControllerTest < ActionDispatch::IntegrationTest
       gift_card: {
         balance: 75.00
       }
-    }
+    }, as: :turbo_stream
 
+    assert_response :see_other
     assert_redirected_to root_url
     assert_equal 75.00, @card.reload.balance
   end
