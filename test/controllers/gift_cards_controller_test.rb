@@ -26,6 +26,7 @@ class GiftCardsControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "•••• •••• •••• 1234"
     assert_not_includes response.body, "6011 9988 7766 1234"
     assert_not_includes response.body, ">5678<"
+    assert_match(/<form[^>]*id="card-active-form"[^>]*data-turbo="false"/, response.body)
   end
 
   test "index displays decrypted card number and pin when session is unlocked" do
@@ -83,11 +84,15 @@ class GiftCardsControllerTest < ActionDispatch::IntegrationTest
       gift_card: {
         balance: 75.00
       }
-    }, as: :turbo_stream
+    }
 
     assert_response :see_other
     assert_redirected_to root_url
     assert_equal 75.00, @card.reload.balance
+
+    follow_redirect!
+    assert_response :success
+    assert_includes response.body, "$75.00"
   end
 
   test "toggles redeemed status" do
