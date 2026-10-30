@@ -16,6 +16,7 @@ services:
     image: gift_card_app:latest
     container_name: gift_card_app
     restart: unless-stopped
+    user: "0:0"
     ports:
       - "${PORT:-3000}:80"
     environment:
@@ -25,10 +26,12 @@ services:
       - RAILS_SERVE_STATIC_FILES=true
       - RAILS_LOG_TO_STDOUT=true
     volumes:
+      # Use a Docker-managed volume so storage persists across image updates.
       - gift_card_storage:/rails/storage
       # Mount the local git-ignored master.key directly into the container:
       - ./config/master.key:/rails/config/master.key:ro
 
 volumes:
   gift_card_storage:
+    name: gift-card-wallet-api-storage
     driver: local

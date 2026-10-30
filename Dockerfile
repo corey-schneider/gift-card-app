@@ -63,11 +63,17 @@ FROM base
 # Run and own only the runtime files as a non-root user for security
 RUN groupadd --system --gid 1000 rails && \
     useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash
-USER 1000:1000
 
 # Copy built artifacts: gems, application
 COPY --chown=rails:rails --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
 COPY --chown=rails:rails --from=build /rails /rails
+
+# Keep the storage directory writable for persistent volumes created before this image.
+RUN install -d -o rails -g rails -m 0755 /rails/storage
+
+# SQLite must be able to write to existing database files and create journal files
+# in the mounted storage directory, whose ownership is controlled by the volume host.
+USER 0:0
 
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
