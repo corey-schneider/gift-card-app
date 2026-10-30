@@ -117,6 +117,27 @@ class GiftCardTest < ActiveSupport::TestCase
     end
   end
 
+  test "every hardcoded merchant has a bundled logo" do
+    GiftCard::MERCHANT_NAMES.each do |merchant|
+      assets = GiftCard.merchant_logo_assets(merchant)
+
+      assert assets.any?, "Expected #{merchant} to have a logo"
+      assets.each do |asset|
+        assert File.file?(Rails.root.join("public", asset)), "Missing logo asset: #{asset}"
+      end
+    end
+  end
+
+  test "merchant logo lookup normalizes common name variants" do
+    chick_fil_a_logo = GiftCard.merchant_logo_assets("Chick-fil-A")
+
+    assert_equal chick_fil_a_logo, GiftCard.merchant_logo_assets("ChickFilA")
+    assert_equal chick_fil_a_logo, GiftCard.merchant_logo_assets("Chick fil A")
+    assert_equal %w[merchants/visa.png merchants/mastercard.png],
+      GiftCard.merchant_logo_assets("Visa + Mastercard")
+    assert_empty GiftCard.merchant_logo_assets("A local independent shop")
+  end
+
   test "uses a repeatable, varied color for stores without a brand preset" do
     first_theme = GiftCard.brand_theme_for("Local Bookshop")
 

@@ -37,7 +37,8 @@
 
         <!-- Store Name -->
         <div data-merchant-suggestions-url="<%= merchant_suggestions_gift_cards_path %>"
-             data-known-merchants="<%= GiftCard::MERCHANT_NAMES.to_json %>">
+             data-known-merchants="<%= GiftCard::MERCHANT_NAMES.to_json %>"
+             data-merchant-logo-assets="<%= GiftCard::MERCHANT_LOGO_ASSETS.transform_values { |assets| assets.map { |asset| "/#{asset}" } }.to_json %>">
           <label class="block text-xs font-semibold text-neutral-300 mb-1">Store / Merchant Name *</label>
           <div class="relative">
             <input type="text" name="gift_card[store_name]" id="card_store_name" required autocomplete="off" aria-autocomplete="list" aria-controls="merchant-suggestions" aria-expanded="false" placeholder="e.g. Target, Amazon, Skydiving Center, Starbucks" class="w-full px-3 py-2 rounded-xl bg-neutral-800 border border-neutral-700 focus:border-neutral-500 focus:ring-1 focus:ring-neutral-500 text-xs text-white placeholder-neutral-500 outline-none transition">
@@ -213,6 +214,7 @@
 
     input.dataset.autocompleteReady = 'true';
     const normalize = value => value.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const logoAssets = JSON.parse(wrapper.dataset.merchantLogoAssets);
     let activeIndex = -1;
     let requestController;
     let searchTimeout;
@@ -232,8 +234,17 @@
         option.dataset.name = name;
         option.setAttribute('role', 'option');
         option.setAttribute('aria-selected', 'false');
-        option.className = 'cursor-pointer rounded-lg px-3 py-2 text-xs text-neutral-200 hover:bg-neutral-800';
-        option.textContent = name;
+        option.className = 'flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-xs text-neutral-200 hover:bg-neutral-800';
+        (logoAssets[normalize(name)] || []).forEach(src => {
+          const logo = document.createElement('img');
+          logo.src = src;
+          logo.alt = '';
+          logo.className = 'h-5 w-5 shrink-0 rounded bg-white p-0.5 object-contain';
+          option.append(logo);
+        });
+        const label = document.createElement('span');
+        label.textContent = name;
+        option.append(label);
         option.addEventListener('pointerdown', event => {
           event.preventDefault();
           input.value = name;

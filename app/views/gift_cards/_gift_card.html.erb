@@ -15,9 +15,14 @@
             </span>
           <% end %>
         </div>
-        <h3 class="text-xl font-bold tracking-tight text-white truncate">
-          <%= gift_card.store_name %>
-        </h3>
+        <div class="flex items-center gap-2 min-w-0">
+          <% GiftCard.merchant_logo_assets(gift_card.store_name).each do |asset| %>
+            <%= image_tag "/#{asset}", alt: "", loading: "lazy", class: "h-7 w-7 shrink-0 rounded-lg object-contain" %>
+          <% end %>
+          <h3 class="text-xl font-bold tracking-tight text-white truncate">
+            <%= gift_card.store_name %>
+          </h3>
+        </div>
       </div>
 
       <!-- Right Column: Balance or Value Description -->
