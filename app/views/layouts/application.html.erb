@@ -20,15 +20,11 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
     <style>
-      body { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; }
-      .font-mono-code { font-family: 'JetBrains Mono', monospace; }
+      body { font-family: system-ui, -apple-system, sans-serif; }
+      .font-mono-code { font-family: ui-monospace, SFMono-Regular, monospace; }
       .pt-safe { padding-top: max(env(safe-area-inset-top), 1rem); }
       .pb-safe { padding-bottom: max(env(safe-area-inset-bottom), 1.5rem); }
     </style>
