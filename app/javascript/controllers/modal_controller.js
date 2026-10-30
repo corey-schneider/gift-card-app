@@ -3,6 +3,10 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["dialog", "content"]
 
+  disconnect() {
+    document.body.classList.remove("overflow-hidden")
+  }
+
   open() {
     this.element.classList.remove("hidden")
     document.body.classList.add("overflow-hidden")

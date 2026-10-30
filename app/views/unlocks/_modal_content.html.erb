@@ -29,7 +29,7 @@
   <% end %>
 
   <!-- Unlock Form -->
-  <%= form_with url: unlock_path, method: :post, data: { pin_pad_target: "form" }, class: "mt-4" do |f| %>
+  <%= form_with url: unlock_path, method: :post, data: { pin_pad_target: "form", turbo: false }, class: "mt-4" do |f| %>
     <!-- Secret PIN Input -->
     <div class="relative flex justify-center mb-5">
       <%= f.password_field :pin, 

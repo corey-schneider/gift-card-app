@@ -26,7 +26,15 @@ class GiftCardsControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "•••• •••• •••• 1234"
     assert_not_includes response.body, "6011 9988 7766 1234"
     assert_not_includes response.body, ">5678<"
-    assert_match(/<form[^>]*id="card-active-form"[^>]*data-turbo="false"/, response.body)
+  end
+
+  test "index responds with a Turbo Stream that replaces the current content" do
+    get root_url, as: :turbo_stream
+
+    assert_response :success
+    assert_equal "text/vnd.turbo-stream.html", response.media_type
+    assert_includes response.body, 'target="app-content"'
+    assert_includes response.body, "Apple Store"
   end
 
   test "index displays decrypted card number and pin when session is unlocked" do
@@ -52,12 +60,14 @@ class GiftCardsControllerTest < ActionDispatch::IntegrationTest
           balance: 35.50,
           color_theme: "amber"
         }
-      }
+      }, as: :turbo_stream
     end
 
-    assert_redirected_to root_url
+    assert_response :success
+    assert_equal "text/vnd.turbo-stream.html", response.media_type
     new_card = GiftCard.find_by(store_name: "Chipotle")
     assert_equal "1122 3344 5566 7788", new_card.card_number
+    assert_includes response.body, "Chipotle"
   end
 
   test "creates new certificate without balance" do
@@ -84,15 +94,16 @@ class GiftCardsControllerTest < ActionDispatch::IntegrationTest
       gift_card: {
         balance: 75.00
       }
-    }
+    }, as: :turbo_stream
 
-    assert_response :see_other
-    assert_redirected_to root_url
-    assert_equal 75.00, @card.reload.balance
-
-    follow_redirect!
     assert_response :success
+    assert_equal "text/vnd.turbo-stream.html", response.media_type
+    assert_equal 75.00, @card.reload.balance
+    assert_includes response.body, 'target="app-content"'
+    assert_includes response.body, 'target="flash-messages"'
     assert_includes response.body, "$75.00"
+    assert_includes response.body, "Apple Store card was updated!"
+    assert_includes response.body, 'class="hidden fixed inset-0'
   end
 
   test "toggles redeemed status" do

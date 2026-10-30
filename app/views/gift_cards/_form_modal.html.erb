@@ -32,7 +32,7 @@
       </div>
 
       <!-- Form (dynamically switched between POST /gift_cards and PATCH /gift_cards/:id) -->
-      <form id="card-active-form" action="<%= gift_cards_path %>" method="post" data-turbo="false" class="space-y-3.5">
+      <form id="card-active-form" action="<%= gift_cards_path %>" method="post" class="space-y-3.5">
         <%= token_tag %>
         <input type="hidden" name="_method" id="card-form-method" value="post">
 

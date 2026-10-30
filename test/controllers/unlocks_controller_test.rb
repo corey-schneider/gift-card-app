@@ -14,6 +14,33 @@ class UnlocksControllerTest < ActionDispatch::IntegrationTest
     assert_in_delta 5.minutes.from_now.to_i, session[:unlocked_until], 5
   end
 
+  test "unlock form submits without Turbo so the page reloads after unlocking" do
+    get root_url
+
+    assert_response :success
+    assert_select "form[action='#{unlock_path}'][data-turbo='false']"
+  end
+
+  test "unlock via Turbo redirects to refreshed vault content" do
+    GiftCard.create!(
+      store_name: "Apple Store",
+      card_number: "6011 9988 7766 1234",
+      pin: "5678"
+    )
+
+    post unlock_url, params: { pin: "1234" }, as: :turbo_stream
+
+    assert_response :see_other
+    assert session[:unlocked_until].present?
+
+    follow_redirect!
+
+    assert_response :success
+    assert_equal "text/vnd.turbo-stream.html", response.media_type
+    assert_includes response.body, 'target="app-content"'
+    assert_includes response.body, "6011 9988 7766 1234"
+  end
+
   test "unlock with incorrect PIN via turbo stream fails with 422 and leaves session locked" do
     post unlock_url, params: { pin: "9999" }, as: :turbo_stream
 
