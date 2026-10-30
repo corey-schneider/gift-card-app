@@ -32,7 +32,7 @@
       </div>
 
       <!-- Form (dynamically switched between POST /gift_cards and PATCH /gift_cards/:id) -->
-      <form id="card-active-form" action="<%= gift_cards_path %>" method="post" class="space-y-3.5">
+      <form id="card-active-form" action="<%= gift_cards_path %>" method="post" autocomplete="off" class="space-y-3.5">
         <%= token_tag %>
         <input type="hidden" name="_method" id="card-form-method" value="post">
 
@@ -64,13 +64,17 @@
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-neutral-300 mb-1">Card Finish</label>
+            <label class="block text-xs font-semibold text-neutral-300 mb-1">Color palette</label>
             <select name="gift_card[color_theme]" id="card_color_theme" class="w-full px-2.5 py-2 rounded-xl bg-neutral-800 border border-neutral-700 focus:border-neutral-500 focus:ring-1 focus:ring-neutral-500 text-xs text-white outline-none transition">
-              <option value="classic">Charcoal Matte</option>
-              <option value="navy">Midnight Navy</option>
-              <option value="stone">Warm Stone</option>
-              <option value="zinc">Obsidian Black</option>
-              <option value="forest">Forest Pine</option>
+              <option value="auto">Brand colors — automatic</option>
+              <option value="evergreen">Evergreen</option>
+              <option value="ocean">Ocean blue</option>
+              <option value="ruby">Ruby red</option>
+              <option value="violet">Violet</option>
+              <option value="rose">Rose</option>
+              <option value="teal">Teal</option>
+              <option value="gold">Gold</option>
+              <option value="classic">Charcoal</option>
             </select>
           </div>
         </div>
@@ -88,12 +92,12 @@
         <div class="grid grid-cols-3 gap-3">
           <div class="col-span-2">
             <label class="block text-xs font-semibold text-neutral-300 mb-1">Card / Certificate Number *</label>
-            <input type="text" name="gift_card[card_number]" id="card_card_number" required placeholder="XXXX XXXX XXXX" class="w-full px-3 py-2 rounded-xl bg-neutral-800 border border-neutral-700 focus:border-neutral-500 focus:ring-1 focus:ring-neutral-500 font-mono-code text-xs text-white placeholder-neutral-500 outline-none transition">
+            <input type="text" name="gift_card[card_number]" id="card_card_number" required autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="XXXX XXXX XXXX" class="w-full px-3 py-2 rounded-xl bg-neutral-800 border border-neutral-700 focus:border-neutral-500 focus:ring-1 focus:ring-neutral-500 font-mono-code text-xs text-white placeholder-neutral-500 outline-none transition">
           </div>
 
           <div>
             <label class="block text-xs font-semibold text-neutral-300 mb-1">PIN (optional)</label>
-            <input type="text" name="gift_card[pin]" id="card_pin" placeholder="PIN" class="w-full px-3 py-2 rounded-xl bg-neutral-800 border border-neutral-700 focus:border-neutral-500 focus:ring-1 focus:ring-neutral-500 font-mono-code text-xs text-white placeholder-neutral-500 outline-none transition">
+            <input type="text" name="gift_card[pin]" id="card_pin" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="PIN" class="w-full px-3 py-2 rounded-xl bg-neutral-800 border border-neutral-700 focus:border-neutral-500 focus:ring-1 focus:ring-neutral-500 font-mono-code text-xs text-white placeholder-neutral-500 outline-none transition">
           </div>
         </div>
 
@@ -162,7 +166,7 @@
     document.getElementById('card_pin').value = '';
     document.getElementById('card_balance').value = '';
     document.getElementById('card_value_description').value = '';
-    document.getElementById('card_color_theme').value = 'classic';
+    document.getElementById('card_color_theme').value = 'auto';
     document.getElementById('card_expiration_date').value = '';
     document.getElementById('card_booking_url').value = '';
     document.getElementById('card_notes').value = '';
@@ -191,7 +195,8 @@
     document.getElementById('card_pin').value = pin || '';
     document.getElementById('card_balance').value = (balance && balance !== "null" && balance !== "0.0") ? balance : '';
     document.getElementById('card_value_description').value = value_desc || '';
-    document.getElementById('card_color_theme').value = theme || 'classic';
+    const legacyThemes = { emerald: 'evergreen', forest: 'evergreen', navy: 'ocean', stone: 'classic', zinc: 'classic', amber: 'gold' };
+    document.getElementById('card_color_theme').value = legacyThemes[theme] || theme || 'auto';
     document.getElementById('card_expiration_date').value = exp || '';
     document.getElementById('card_booking_url').value = booking || '';
     document.getElementById('card_notes').value = notes || '';

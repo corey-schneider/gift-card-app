@@ -26,6 +26,9 @@ class GiftCardsControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "•••• •••• •••• 1234"
     assert_not_includes response.body, "6011 9988 7766 1234"
     assert_not_includes response.body, ">5678<"
+    assert_includes response.body, "Added #{@card.created_at.strftime('%b %-d, %Y')}"
+    assert_match(/name="gift_card\[card_number\]"[^>]*autocomplete="off"/, response.body)
+    assert_match(/name="gift_card\[pin\]"[^>]*autocomplete="off"/, response.body)
   end
 
   test "index responds with a Turbo Stream that replaces the current content" do

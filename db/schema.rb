@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_19_232758) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_30_140000) do
   create_table "app_settings", force: :cascade do |t|
     t.string "passcode_digest"
     t.datetime "created_at", null: false
@@ -26,7 +26,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_232758) do
     t.date "expiration_date"
     t.string "booking_url"
     t.boolean "redeemed", default: false, null: false
-    t.string "color_theme", default: "emerald"
+    t.string "color_theme", default: "auto"
     t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

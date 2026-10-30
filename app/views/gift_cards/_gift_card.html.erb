@@ -1,6 +1,6 @@
-<div id="<%= dom_id(gift_card) %>" class="relative rounded-2xl overflow-hidden border <%= gift_card.finish_config[:border] %> shadow-md transition-all duration-200 hover:border-neutral-700 <%= gift_card.redeemed? ? 'opacity-60' : '' %>">
-  <!-- Matte Classic Card Body -->
-  <div class="p-5 <%= gift_card.finish_config[:bg] %> text-neutral-100 flex flex-col justify-between min-h-[200px]">
+<div id="<%= dom_id(gift_card) %>" class="relative rounded-2xl overflow-hidden border shadow-md transition-all duration-200 <%= gift_card.redeemed? ? 'opacity-60' : '' %>" style="border-color: <%= gift_card.finish_config[:border] %>">
+  <!-- Brand-inspired Card Body -->
+  <div class="p-5 text-neutral-100 flex flex-col justify-between min-h-[200px]" style="background: <%= gift_card.finish_config[:background] %>">
     
     <!-- Top Row: Store Name & Balance / Value -->
     <div class="flex items-start justify-between gap-3">
@@ -172,8 +172,9 @@
     </div>
 
     <!-- Card Action Footer -->
-    <div class="mt-3 pt-3 border-t border-neutral-800/80 flex items-center justify-between text-xs text-neutral-300">
+    <div class="mt-3 pt-3 border-t border-white/15 flex items-center justify-between text-xs text-neutral-300">
       <div class="flex items-center gap-2">
+        <span class="text-[10px] text-neutral-400">Added <%= gift_card.created_at.strftime("%b %-d, %Y") %></span>
         <% if gift_card.booking_url.present? %>
           <a href="<%= gift_card.booking_url %>" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-medium text-neutral-300 hover:text-white underline decoration-neutral-600 hover:decoration-white transition">
             <span>Website</span>

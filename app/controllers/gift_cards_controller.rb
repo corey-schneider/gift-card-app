@@ -14,7 +14,7 @@ class GiftCardsController < ApplicationController
   end
 
   def new
-    @gift_card = GiftCard.new(balance: 0.0, color_theme: "emerald", currency: "USD")
+    @gift_card = GiftCard.new(balance: 0.0, color_theme: "auto", currency: "USD")
   end
 
   def edit

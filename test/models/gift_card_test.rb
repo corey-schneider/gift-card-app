@@ -59,6 +59,49 @@ class GiftCardTest < ActiveSupport::TestCase
     assert_equal "••••", short_card.masked_card_number
   end
 
+  test "automatically chooses brand-inspired colors from store names" do
+    {
+      "iFLY" => "ifly",
+      "Starbucks" => "starbucks",
+      "Dunkin Donuts" => "dunkin",
+      "Chipotle" => "chipotle",
+      "Amazon" => "amazon",
+      "Top golf" => "topgolf",
+      "Ulta" => "ulta",
+      "HomeGoods" => "homegoods",
+      "TJ MAXX" => "homegoods",
+      "Marshalls" => "homegoods",
+      "Sierra" => "homegoods",
+      "Homesense" => "homegoods",
+      "Carvel" => "carvel",
+      "Bath & Body Works" => "bath_body_works",
+      "GrubHub" => "grubhub",
+      "Target" => "target",
+      "Sephora" => "sephora",
+      "prepaid card (VISA + MasterCard)" => "prepaid_network",
+      "Barnes & Noble" => "barnes_noble",
+      "Petco" => "petco",
+      "Home Depot" => "home_depot",
+      "Lowe's" => "lowes",
+      "eBay" => "ebay",
+      "AMC Theaters" => "amc",
+      "Macy's" => "macys"
+    }.each do |store_name, expected_theme|
+      card = GiftCard.new(store_name: store_name, color_theme: "auto")
+
+      assert_equal expected_theme, GiftCard.brand_theme_for(store_name)
+      assert_equal GiftCard::CARD_FINISHES[expected_theme], card.finish_config
+    end
+  end
+
+  test "uses a repeatable, varied color for stores without a brand preset" do
+    first_theme = GiftCard.brand_theme_for("Local Bookshop")
+
+    assert_includes GiftCard::AUTO_COLOR_THEMES, first_theme
+    assert_equal first_theme, GiftCard.brand_theme_for("Local Bookshop")
+    assert_not_equal first_theme, GiftCard.brand_theme_for("Neighborhood Bakery")
+  end
+
   test "sorting scopes" do
     card1 = GiftCard.create!(store_name: "Zeta Store", card_number: "1111", balance: 10, expiration_date: Date.current + 30.days)
     card2 = GiftCard.create!(store_name: "Alpha Store", card_number: "2222", balance: 50, expiration_date: Date.current + 5.days)
