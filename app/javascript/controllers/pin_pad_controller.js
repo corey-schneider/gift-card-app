@@ -43,18 +43,16 @@ export default class extends Controller {
   }
 
   updateDots() {
-    const currentLength = this.hasInputTarget ? this.inputTarget.value.length : 0
-    if (this.hasDotTargets) {
-      this.dotTargets.forEach((dot, index) => {
-        if (index < currentLength) {
-          dot.classList.add("bg-white", "scale-110")
-          dot.classList.remove("bg-neutral-700")
-        } else {
-          dot.classList.remove("bg-white", "scale-110")
-          dot.classList.add("bg-neutral-700")
-        }
-      })
-    }
+    const input = this.element.querySelector('input[name="pin"]')
+    const currentLength = input?.value.length || 0
+
+    this.element.querySelectorAll('[data-pin-pad-target~="dot"]').forEach((dot, index) => {
+      const filled = index < currentLength
+      dot.classList.toggle("bg-white", filled)
+      dot.classList.toggle("bg-neutral-700", !filled)
+      dot.classList.toggle("scale-110", filled)
+      dot.style.backgroundColor = filled ? "#fff" : "#404040"
+    })
   }
 
   checkAutoSubmit() {
