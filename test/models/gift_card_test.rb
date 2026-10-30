@@ -94,6 +94,29 @@ class GiftCardTest < ActiveSupport::TestCase
     end
   end
 
+  test "popular merchants have matching autocomplete names and brand colors" do
+    expected_themes = {
+      "McDonald's" => "mcdonalds",
+      "Taco Bell" => "taco_bell",
+      "Trader Joe's" => "trader_joes",
+      "ALDI" => "aldi",
+      "Nordstrom" => "nordstrom",
+      "Google Play" => "google_play",
+      "Xbox" => "xbox",
+      "PlayStation" => "playstation",
+      "Steam" => "steam",
+      "Uber" => "uber",
+      "Lyft" => "lyft",
+      "Spotify" => "spotify"
+    }
+
+    expected_themes.each do |merchant, theme|
+      assert_includes GiftCard::MERCHANT_NAMES, merchant
+      assert_equal theme, GiftCard.brand_theme_for(merchant)
+      assert GiftCard::CARD_FINISHES.key?(theme)
+    end
+  end
+
   test "uses a repeatable, varied color for stores without a brand preset" do
     first_theme = GiftCard.brand_theme_for("Local Bookshop")
 

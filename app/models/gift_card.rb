@@ -112,7 +112,34 @@ class GiftCard < ApplicationRecord
     "disney" => { name: "Disney", background: "linear-gradient(135deg, #1e40af, #111827)", border: "#60a5fa" },
     "netflix" => { name: "Netflix", background: "linear-gradient(135deg, #b91c1c, #18181b)", border: "#ef4444" },
     "doordash" => { name: "DoorDash", background: "linear-gradient(135deg, #b91c1c, #450a0a)", border: "#fb7185" },
-    "chick_fil_a" => { name: "Chick-fil-A", background: "linear-gradient(135deg, #b91c1c, #450a0a)", border: "#ef4444" }
+    "chick_fil_a" => { name: "Chick-fil-A", background: "linear-gradient(135deg, #b91c1c, #450a0a)", border: "#ef4444" },
+    "mcdonalds" => { name: "McDonald's", background: "linear-gradient(120deg, #b91c1c 0%, #7f1d1d 68%, #a16207 100%)", border: "#facc15" },
+    "taco_bell" => { name: "Taco Bell", background: "linear-gradient(135deg, #6d28d9, #2e1065)", border: "#a78bfa" },
+    "subway" => { name: "Subway", background: "linear-gradient(120deg, #166534 0%, #14532d 58%, #a16207 100%)", border: "#facc15" },
+    "panera" => { name: "Panera Bread", background: "linear-gradient(135deg, #166534, #052e16)", border: "#86efac" },
+    "olive_garden" => { name: "Olive Garden", background: "linear-gradient(135deg, #166534, #052e16)", border: "#a3a635" },
+    "trader_joes" => { name: "Trader Joe's", background: "linear-gradient(135deg, #b91c1c, #450a0a)", border: "#ef4444" },
+    "aldi" => { name: "ALDI", background: "linear-gradient(120deg, #1d4ed8, #172554 60%, #ea580c)", border: "#fb923c" },
+    "kroger" => { name: "Kroger", background: "linear-gradient(135deg, #1d4ed8, #172554)", border: "#60a5fa" },
+    "publix" => { name: "Publix", background: "linear-gradient(135deg, #166534, #052e16)", border: "#86efac" },
+    "kohls" => { name: "Kohl's", background: "linear-gradient(135deg, #b91c1c, #450a0a)", border: "#ef4444" },
+    "nordstrom" => { name: "Nordstrom", background: "linear-gradient(135deg, #27272a, #09090b)", border: "#a1a1aa" },
+    "gap" => { name: "Gap", background: "linear-gradient(135deg, #1e3a8a, #172554)", border: "#60a5fa" },
+    "old_navy" => { name: "Old Navy", background: "linear-gradient(135deg, #1d4ed8, #172554)", border: "#60a5fa" },
+    "dicks" => { name: "DICK'S Sporting Goods", background: "linear-gradient(135deg, #166534, #052e16)", border: "#86efac" },
+    "rei" => { name: "REI", background: "linear-gradient(135deg, #166534, #052e16)", border: "#86efac" },
+    "gamestop" => { name: "GameStop", background: "linear-gradient(135deg, #b91c1c, #450a0a)", border: "#ef4444" },
+    "google_play" => { name: "Google Play", background: "linear-gradient(120deg, #1d4ed8, #0f766e 52%, #a16207)", border: "#34d399" },
+    "xbox" => { name: "Xbox", background: "linear-gradient(135deg, #15803d, #052e16)", border: "#4ade80" },
+    "playstation" => { name: "PlayStation", background: "linear-gradient(135deg, #1d4ed8, #172554)", border: "#60a5fa" },
+    "nintendo" => { name: "Nintendo", background: "linear-gradient(135deg, #b91c1c, #450a0a)", border: "#ef4444" },
+    "steam" => { name: "Steam", background: "linear-gradient(135deg, #1e3a8a, #09090b)", border: "#60a5fa" },
+    "uber" => { name: "Uber", background: "linear-gradient(135deg, #27272a, #09090b)", border: "#a1a1aa" },
+    "lyft" => { name: "Lyft", background: "linear-gradient(135deg, #a21caf, #3b0764)", border: "#e879f9" },
+    "instacart" => { name: "Instacart", background: "linear-gradient(135deg, #15803d, #052e16)", border: "#4ade80" },
+    "spotify" => { name: "Spotify", background: "linear-gradient(135deg, #15803d, #052e16)", border: "#4ade80" },
+    "hulu" => { name: "Hulu", background: "linear-gradient(135deg, #15803d, #052e16)", border: "#4ade80" },
+    "roblox" => { name: "Roblox", background: "linear-gradient(135deg, #27272a, #09090b)", border: "#ef4444" }
   }.freeze
 
   BRAND_ALIASES = {
@@ -149,7 +176,34 @@ class GiftCard < ApplicationRecord
     "disney" => %w[disney],
     "netflix" => %w[netflix],
     "doordash" => ["doordash", "door dash"],
-    "chick_fil_a" => ["chick-fil-a", "chick fil a"]
+    "chick_fil_a" => ["chick-fil-a", "chick fil a"],
+    "mcdonalds" => ["mcdonald's", "mcdonalds", "mcdonald"],
+    "taco_bell" => ["taco bell"],
+    "subway" => ["subway"],
+    "panera" => ["panera", "panera bread"],
+    "olive_garden" => ["olive garden"],
+    "trader_joes" => ["trader joe's", "trader joes"],
+    "aldi" => ["aldi"],
+    "kroger" => ["kroger"],
+    "publix" => ["publix"],
+    "kohls" => ["kohl's", "kohls"],
+    "nordstrom" => ["nordstrom"],
+    "gap" => ["gap"],
+    "old_navy" => ["old navy"],
+    "dicks" => ["dick's sporting goods", "dicks sporting goods"],
+    "rei" => ["rei"],
+    "gamestop" => ["gamestop", "game stop"],
+    "google_play" => ["google play", "google play store"],
+    "xbox" => ["xbox"],
+    "playstation" => ["playstation", "play station"],
+    "nintendo" => ["nintendo"],
+    "steam" => ["steam"],
+    "uber" => ["uber"],
+    "lyft" => ["lyft"],
+    "instacart" => ["instacart"],
+    "spotify" => ["spotify"],
+    "hulu" => ["hulu"],
+    "roblox" => ["roblox"]
   }.freeze
 
   MERCHANT_NAMES = [
@@ -159,7 +213,11 @@ class GiftCard < ApplicationRecord
     "The Home Depot", "Lowe's", "eBay", "Visa / Mastercard Prepaid", "AMC Theatres",
     "Macy's", "Apple", "Best Buy", "Walmart", "Costco", "Whole Foods Market",
     "Walgreens", "Nike", "Airbnb", "Delta", "Disney", "Netflix", "DoorDash",
-    "Chick-fil-A", "AliExpress"
+    "Chick-fil-A", "AliExpress", "McDonald's", "Taco Bell", "Subway", "Panera Bread",
+    "Olive Garden", "Trader Joe's", "ALDI", "Kroger", "Publix", "Kohl's", "Nordstrom",
+    "Gap", "Old Navy", "DICK'S Sporting Goods", "REI", "GameStop", "Google Play",
+    "Xbox", "PlayStation", "Nintendo", "Steam", "Uber", "Lyft", "Instacart", "Spotify",
+    "Hulu", "Roblox"
   ].freeze
 
   AUTO_COLOR_THEMES = %w[evergreen ocean ruby violet rose teal gold].freeze
