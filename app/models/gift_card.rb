@@ -152,10 +152,40 @@ class GiftCard < ApplicationRecord
     "chick_fil_a" => ["chick-fil-a", "chick fil a"]
   }.freeze
 
+  MERCHANT_NAMES = [
+    "iFLY", "Starbucks", "Dunkin'", "Chipotle", "Amazon", "Topgolf", "Ulta Beauty",
+    "HomeGoods", "TJ Maxx", "Marshalls", "Sierra", "Homesense", "Carvel",
+    "Bath & Body Works", "Grubhub", "Target", "Sephora", "Barnes & Noble", "Petco",
+    "The Home Depot", "Lowe's", "eBay", "Visa / Mastercard Prepaid", "AMC Theatres",
+    "Macy's", "Apple", "Best Buy", "Walmart", "Costco", "Whole Foods Market",
+    "Walgreens", "Nike", "Airbnb", "Delta", "Disney", "Netflix", "DoorDash",
+    "Chick-fil-A", "AliExpress"
+  ].freeze
+
   AUTO_COLOR_THEMES = %w[evergreen ocean ruby violet rose teal gold].freeze
 
+  def self.merchant_suggestions(query, limit: 10)
+    normalized_query = normalize_merchant_name(query)
+    return [] if normalized_query.empty?
+
+    known_matches = MERCHANT_NAMES.select do |name|
+      normalize_merchant_name(name).start_with?(normalized_query)
+    end
+    stored_matches = distinct.pluck(:store_name).select do |name|
+      normalize_merchant_name(name).start_with?(normalized_query)
+    end.sort_by { |name| [normalize_merchant_name(name), name.downcase, name] }
+
+    (known_matches + stored_matches)
+      .uniq { |name| normalize_merchant_name(name) }
+      .first(limit)
+  end
+
+  def self.normalize_merchant_name(name)
+    name.to_s.downcase.gsub(/[^a-z0-9]/, "")
+  end
+
   def self.brand_theme_for(store_name)
-    normalized_name = store_name.to_s.downcase.gsub(/[^a-z0-9]/, "")
+    normalized_name = normalize_merchant_name(store_name)
     return "classic" if normalized_name.empty?
 
     BRAND_ALIASES.each do |theme, aliases|

@@ -1,14 +1,13 @@
 <!-- Master PIN Settings Modal -->
 <div id="settings-modal" 
-     data-controller="modal" 
      class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm transition-all duration-200"
-     data-action="click->modal#closeOnBackdrop keydown.esc@window->modal#closeOnEsc">
+     onclick="if (event.target === this) window.closeVaultModal(this)">
   
   <div data-modal-target="content" 
        class="w-full max-w-sm bg-neutral-900 border border-neutral-800 rounded-2xl p-6 shadow-2xl relative text-left">
     
     <button type="button" 
-            data-action="click->modal#close" 
+            onclick="window.closeVaultModal(this)" 
             class="absolute top-4 right-4 p-2 text-neutral-400 hover:text-white rounded-lg bg-neutral-800/60 hover:bg-neutral-800 transition">
       <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />

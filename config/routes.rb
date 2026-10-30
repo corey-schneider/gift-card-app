@@ -12,6 +12,9 @@ Rails.application.routes.draw do
   # Gift Cards management
   root "gift_cards#index"
   resources :gift_cards do
+    collection do
+      get :merchant_suggestions
+    end
     member do
       patch :toggle_redeemed
     end

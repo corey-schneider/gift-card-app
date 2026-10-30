@@ -40,6 +40,50 @@ class GiftCardsControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Apple Store"
   end
 
+  test "merchant suggestions combine known names with case-insensitive stored-name matches" do
+    GiftCard.create!(store_name: "Ali Express Outlet", card_number: "ALI-123")
+    GiftCard.create!(store_name: "Target", card_number: "TGT-123")
+
+    get merchant_suggestions_gift_cards_url, params: { q: "ali" }, as: :json
+
+    assert_response :success
+    assert_includes response.parsed_body, "AliExpress"
+    assert_includes response.parsed_body, "Ali Express Outlet"
+  end
+
+  test "merchant suggestions normalize punctuation for known merchant names" do
+    get merchant_suggestions_gift_cards_url, params: { q: "ChickFilA" }, as: :json
+
+    assert_response :success
+    assert_equal ["Chick-fil-A"], response.parsed_body
+  end
+
+  test "merchant suggestions normalize punctuation for names already in the database" do
+    GiftCard.create!(store_name: "Chick Fil A Express", card_number: "CFA-123")
+
+    get merchant_suggestions_gift_cards_url, params: { q: "ChickFilAE" }, as: :json
+
+    assert_response :success
+    assert_equal ["Chick Fil A Express"], response.parsed_body
+  end
+
+  test "merchant suggestions normalize punctuation in typed and stored names" do
+    GiftCard.create!(store_name: "A% Store", card_number: "PCT-123")
+    GiftCard.create!(store_name: "Amazon", card_number: "AMZ-123")
+
+    get merchant_suggestions_gift_cards_url, params: { q: "A% S" }, as: :json
+
+    assert_response :success
+    assert_equal ["A% Store"], response.parsed_body
+  end
+
+  test "merchant suggestions return an empty list for a blank query" do
+    get merchant_suggestions_gift_cards_url, params: { q: " " }, as: :json
+
+    assert_response :success
+    assert_equal [], response.parsed_body
+  end
+
   test "index displays decrypted card number and pin when session is unlocked" do
     # Unlock session
     post unlock_url, params: { pin: "1234" }

@@ -112,6 +112,7 @@
 
               <!-- Barcode Button -->
               <button type="button" 
+                      onclick="window.openVaultModal('barcode-modal')"
                       data-action="click->barcode-modal#show" 
                       data-store="<%= gift_card.store_name %>" 
                       data-number="<%= gift_card.clean_card_number %>"

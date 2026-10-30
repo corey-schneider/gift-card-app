@@ -10,6 +10,10 @@ class GiftCardsController < ApplicationController
     end
   end
 
+  def merchant_suggestions
+    render json: GiftCard.merchant_suggestions(params[:q])
+  end
+
   def show
   end
 
