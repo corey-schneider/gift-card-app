@@ -139,9 +139,9 @@
           <!-- Sort Select -->
           <div class="relative shrink-0">
             <select name="sort" onchange="this.form.submit()" class="appearance-none pl-2.5 pr-7 py-1 rounded-lg bg-neutral-900 border border-neutral-800 text-xs text-neutral-300 focus:outline-none focus:border-neutral-600 transition cursor-pointer">
-              <option value="expiring_first" <%= 'selected' if @current_sort == 'expiring_first' %>>Expiring First</option>
-              <option value="exp_asc" <%= 'selected' if @current_sort == 'exp_asc' %>>Expiration: Soonest</option>
-              <option value="exp_desc" <%= 'selected' if @current_sort == 'exp_desc' %>>Expiration: Furthest</option>
+              <option value="expiring_first" <%= 'selected' if @current_sort == 'expiring_first' %>>Expiring first</option>
+              <option value="exp_asc" <%= 'selected' if @current_sort == 'exp_asc' %>>Expiration: soonest</option>
+              <option value="exp_desc" <%= 'selected' if @current_sort == 'exp_desc' %>>Expiration: furthest</option>
               <option value="name_asc" <%= 'selected' if @current_sort == 'name_asc' %>>Store: A → Z</option>
               <option value="name_desc" <%= 'selected' if @current_sort == 'name_desc' %>>Store: Z → A</option>
               <option value="amount_desc" <%= 'selected' if @current_sort == 'amount_desc' %>>Balance: High → Low</option>
