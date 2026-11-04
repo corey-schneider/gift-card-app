@@ -4,8 +4,8 @@ export default class extends Controller {
   static targets = ["source", "feedback", "icon"]
   static values = { text: String }
 
-  copy(event) {
-    if (event) event.preventDefault()
+  async copy(event) {
+    event?.preventDefault()
 
     const textToCopy = this.hasTextValue && this.textValue
       ? this.textValue
@@ -13,22 +13,55 @@ export default class extends Controller {
 
     if (!textToCopy) return
 
-    navigator.clipboard.writeText(textToCopy).then(() => {
+    let copied = false
+    let clipboardError
+
+    if (navigator.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(textToCopy)
+        copied = true
+      } catch (error) {
+        clipboardError = error
+      }
+    }
+
+    if (!copied) {
+      try {
+        copied = this.copyWithFallback(textToCopy)
+      } catch (error) {
+        console.error("Clipboard fallback failed", error)
+      }
+    }
+
+    if (copied) {
       this.showCopiedState()
-    }).catch(err => {
-      // Fallback
-      const textarea = document.createElement("textarea")
-      textarea.value = textToCopy
-      document.body.appendChild(textarea)
+    } else {
+      if (clipboardError) console.error("Clipboard API failed", clipboardError)
+      this.showCopyFailedState()
+    }
+  }
+
+  copyWithFallback(text) {
+    const textarea = document.createElement("textarea")
+    textarea.value = text
+    textarea.setAttribute("readonly", "")
+    textarea.style.position = "fixed"
+    textarea.style.opacity = "0"
+    document.body.appendChild(textarea)
+
+    try {
+      textarea.focus()
       textarea.select()
-      document.execCommand("copy")
-      document.body.removeChild(textarea)
-      this.showCopiedState()
-    })
+      textarea.setSelectionRange(0, textarea.value.length)
+      return document.execCommand("copy")
+    } finally {
+      textarea.remove()
+    }
   }
 
   showCopiedState() {
     if (this.hasFeedbackTarget) {
+      this.feedbackTarget.textContent = "Copied"
       this.feedbackTarget.classList.remove("hidden")
       setTimeout(() => {
         this.feedbackTarget.classList.add("hidden")
@@ -44,6 +77,17 @@ export default class extends Controller {
       `
       setTimeout(() => {
         this.iconTarget.innerHTML = originalHtml
+      }, 1800)
+    }
+  }
+
+  showCopyFailedState() {
+    if (this.hasFeedbackTarget) {
+      this.feedbackTarget.textContent = "Copy failed"
+      this.feedbackTarget.classList.remove("hidden")
+      setTimeout(() => {
+        this.feedbackTarget.classList.add("hidden")
+        this.feedbackTarget.textContent = "Copied"
       }, 1800)
     }
   }
