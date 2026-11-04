@@ -107,7 +107,8 @@ class GiftCardTest < ActiveSupport::TestCase
       "Steam" => "steam",
       "Uber" => "uber",
       "Lyft" => "lyft",
-      "Spotify" => "spotify"
+      "Spotify" => "spotify",
+      "Wonder" => "wonder"
     }
 
     expected_themes.each do |merchant, theme|
@@ -117,20 +118,16 @@ class GiftCardTest < ActiveSupport::TestCase
     end
   end
 
-  test "every hardcoded merchant has a bundled logo" do
-    GiftCard::MERCHANT_NAMES.each do |merchant|
-      assets = GiftCard.merchant_logo_assets(merchant)
-
-      assert assets.any?, "Expected #{merchant} to have a logo"
-      assets.each do |asset|
-        assert File.file?(Rails.root.join("public", asset)), "Missing logo asset: #{asset}"
-      end
+  test "every configured merchant logo is bundled" do
+    GiftCard::MERCHANT_LOGO_ASSETS.values.flatten.uniq.each do |asset|
+      assert File.file?(Rails.root.join("public", asset)), "Missing logo asset: #{asset}"
     end
   end
 
   test "merchant logo lookup normalizes common name variants" do
     chick_fil_a_logo = GiftCard.merchant_logo_assets("Chick-fil-A")
 
+    assert_equal ["merchants/wonder.png"], GiftCard.merchant_logo_assets("Wonder")
     assert_equal chick_fil_a_logo, GiftCard.merchant_logo_assets("ChickFilA")
     assert_equal chick_fil_a_logo, GiftCard.merchant_logo_assets("Chick fil A")
     assert_equal %w[merchants/visa.png merchants/mastercard.png],

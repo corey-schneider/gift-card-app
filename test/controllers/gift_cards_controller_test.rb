@@ -58,6 +58,13 @@ class GiftCardsControllerTest < ActionDispatch::IntegrationTest
     assert_equal ["Chick-fil-A"], response.parsed_body
   end
 
+  test "merchant suggestions include Wonder as a known merchant" do
+    get merchant_suggestions_gift_cards_url, params: { q: "wonder" }, as: :json
+
+    assert_response :success
+    assert_equal ["Wonder"], response.parsed_body
+  end
+
   test "merchant suggestions normalize punctuation for names already in the database" do
     GiftCard.create!(store_name: "Chick Fil A Express", card_number: "CFA-123")
 
